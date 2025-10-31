@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Melange Labs — Coming Soon</title>
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(24, 36, 60, 0.8), rgba(6, 9, 18, 1) 55%) fixed,
+        radial-gradient(circle at 80% 30%, rgba(33, 16, 54, 0.6), rgba(6, 9, 18, 0.95) 60%) fixed,
+        #04060f;
+      color: #f5f7ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    canvas#smokeCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      filter: blur(0.5px);
+      z-index: -1;
+    }
+
+    .top-bar {
+      position: fixed;
+      top: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 14px 32px;
+      background: rgba(10, 14, 28, 0.65);
+      border: 1px solid rgba(120, 130, 200, 0.2);
+      border-radius: 999px;
+      backdrop-filter: blur(18px);
+      box-shadow:
+        0 30px 80px rgba(20, 40, 85, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 1.1rem;
+      letter-spacing: 0.28rem;
+      text-transform: uppercase;
+      background: linear-gradient(120deg, #71f9ff 0%, #928dff 48%, #ff76db 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+    }
+
+    .main-content {
+      text-align: center;
+      padding: 20vh 20px 15vh;
+      max-width: 600px;
+      z-index: 1;
+    }
+
+    .headline {
+      font-size: clamp(3rem, 10vw, 5.2rem);
+      font-weight: 600;
+      margin: 0 0 1.6rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #f0f4ff;
+      text-shadow:
+        0 4px 18px rgba(120, 170, 255, 0.35),
+        0 12px 42px rgba(90, 45, 140, 0.35);
+    }
+
+    .tagline {
+      margin-bottom: 2.4rem;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: rgba(212, 220, 255, 0.72);
+    }
+
+    .contact-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.9rem 2.8rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(64, 148, 255, 0.85), rgba(176, 116, 255, 0.85));
+      color: #04060f;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      box-shadow:
+        0 18px 38px rgba(68, 102, 220, 0.35),
+        0 0 0 1px rgba(160, 180, 255, 0.35);
+    }
+
+    .contact-button:hover,
+    .contact-button:focus-visible {
+      transform: translateY(-3px);
+      box-shadow:
+        0 26px 48px rgba(92, 128, 255, 0.45),
+        0 0 0 1px rgba(160, 180, 255, 0.5);
+    }
+
+    .contact-button:active {
+      transform: translateY(1px);
+    }
+
+    @media (max-width: 640px) {
+      .top-bar {
+        top: 18px;
+        padding: 10px 24px;
+      }
+
+      .brand-title {
+        font-size: 0.95rem;
+        letter-spacing: 0.22rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="smokeCanvas" aria-hidden="true"></canvas>
+  <div class="top-bar">
+    <span class="brand-title">Melange Labs</span>
+  </div>
+
+  <main class="main-content">
+    <h1 class="headline">Coming soon…</h1>
+    <p class="tagline">
+      We are distilling the next wave of intelligent experiences. Melange Labs mixes artful design, machine intelligence,
+      and engineering precision into products that feel effortless.
+    </p>
+    <a class="contact-button" href="mailto:oorischubert@gmail.com">Contact us</a>
+  </main>
+
+  <script>
+    (function () {
+      const canvas = document.getElementById("smokeCanvas");
+      const ctx = canvas.getContext("2d");
+      const particles = [];
+      const pointer = { x: 0, y: 0, active: false };
+      const base = {
+        hue: [195, 265],
+        attractionRadius: 480,
+        maxForce: 0.12,
+        fadeOpacity: 0.08
+      };
+      const stage = { width: window.innerWidth, height: window.innerHeight, dpr: 1 };
+
+      function resize() {
+        stage.width = window.innerWidth;
+        stage.height = window.innerHeight;
+        stage.dpr = Math.min(2, window.devicePixelRatio || 1);
+
+        canvas.width = stage.width * stage.dpr;
+        canvas.height = stage.height * stage.dpr;
+        canvas.style.width = stage.width + "px";
+        canvas.style.height = stage.height + "px";
+        ctx.setTransform(stage.dpr, 0, 0, stage.dpr, 0, 0);
+        ensureParticles();
+      }
+
+      function createParticle() {
+        return {
+          x: Math.random() * stage.width,
+          y: Math.random() * stage.height,
+          radius: 240 + Math.random() * 200,
+          alpha: 0.12 + Math.random() * 0.1,
+          hue: base.hue[0] + Math.random() * (base.hue[1] - base.hue[0]),
+          vx: (Math.random() - 0.5) * 0.25,
+          vy: (Math.random() - 0.5) * 0.25,
+          wobble: Math.random() * Math.PI * 2,
+          wobbleSpeed: 0.001 + Math.random() * 0.0025
+        };
+      }
+
+      function ensureParticles() {
+        const targetCount = Math.max(24, Math.floor((stage.width * stage.height) / 22000));
+        if (targetCount === particles.length) {
+          return;
+        }
+        while (particles.length < targetCount) {
+          particles.push(createParticle());
+        }
+        if (particles.length > targetCount) {
+          particles.length = targetCount;
+        }
+      }
+
+      function updateParticle(p) {
+        p.wobble += p.wobbleSpeed;
+        p.x += p.vx + Math.cos(p.wobble) * 0.6;
+        p.y += p.vy + Math.sin(p.wobble) * 0.6;
+        p.vx *= 0.985;
+        p.vy *= 0.985;
+
+        if (pointer.active) {
+          const dx = pointer.x - p.x;
+          const dy = pointer.y - p.y;
+          const dist = Math.hypot(dx, dy) || 1;
+          const influenceRadius = base.attractionRadius;
+          if (dist < influenceRadius) {
+            const force = (1 - dist / influenceRadius) * base.maxForce;
+            p.vx += (dx / dist) * force;
+            p.vy += (dy / dist) * force;
+          }
+        }
+
+        if (p.x < -p.radius) p.x = stage.width + p.radius;
+        if (p.x > stage.width + p.radius) p.x = -p.radius;
+        if (p.y < -p.radius) p.y = stage.height + p.radius;
+        if (p.y > stage.height + p.radius) p.y = -p.radius;
+      }
+
+      function drawParticle(p) {
+        const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
+        gradient.addColorStop(0, `hsla(${p.hue}, 85%, 68%, ${p.alpha})`);
+        gradient.addColorStop(0.4, `hsla(${p.hue + 20}, 80%, 52%, ${p.alpha * 0.55})`);
+        gradient.addColorStop(1, `rgba(10, 14, 28, 0)`);
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function render() {
+        ctx.globalCompositeOperation = "source-over";
+        ctx.fillStyle = `rgba(4, 6, 15, ${base.fadeOpacity})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.globalCompositeOperation = "lighter";
+
+        for (let i = 0; i < particles.length; i++) {
+          updateParticle(particles[i]);
+          drawParticle(particles[i]);
+        }
+
+        ctx.globalCompositeOperation = "source-over";
+        requestAnimationFrame(render);
+      }
+
+      function updatePointer(event) {
+        const rect = canvas.getBoundingClientRect();
+        pointer.x = (event.clientX - rect.left);
+        pointer.y = (event.clientY - rect.top);
+        pointer.active = true;
+      }
+
+      function deactivatePointer() {
+        pointer.active = false;
+      }
+
+      resize();
+      render();
+
+      window.addEventListener("resize", () => {
+        resize();
+      });
+
+      window.addEventListener("pointermove", updatePointer);
+      window.addEventListener("pointerleave", deactivatePointer);
+    })();
+  </script>
+</body>
+</html>
