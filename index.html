@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Melange Labs — Coming Soon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap"
+  >
   <style>
     :root {
       color-scheme: dark;
@@ -61,6 +67,7 @@
       font-size: 1.05rem;
       letter-spacing: 0.18rem;
       text-transform: capitalize;
+       font-family: "Lexend", "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
       background: linear-gradient(120deg, #5c6484 0%, #727a97 50%, #8b93ac 100%);
       background-clip: text;
       -webkit-background-clip: text;
@@ -83,16 +90,18 @@
       gap: 0.5rem;
       padding: 0.95rem 2.9rem;
       border-radius: 999px;
-      background: linear-gradient(135deg, rgba(24, 30, 45, 0.96), rgba(10, 14, 24, 0.96));
-      color: rgba(198, 202, 214, 0.85);
+      background: rgba(10, 13, 22, 0.65);
+      color: rgba(206, 210, 222, 0.92);
       font-weight: 500;
       letter-spacing: 0.04em;
       text-decoration: none;
       text-transform: none;
       transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
       box-shadow:
-        0 14px 28px rgba(3, 4, 10, 0.68),
-        0 0 0 1px rgba(60, 70, 96, 0.4);
+        0 18px 36px rgba(3, 4, 10, 0.58),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(88, 100, 150, 0.15);
+      backdrop-filter: blur(18px);
     }
 
     .contact-button:hover,
@@ -101,7 +110,11 @@
       box-shadow:
         0 20px 34px rgba(3, 4, 10, 0.72),
         0 0 0 1px rgba(70, 82, 112, 0.46);
-      background: linear-gradient(135deg, rgba(28, 36, 52, 0.98), rgba(12, 16, 26, 0.98));
+    }
+
+    .contact-button:hover::before,
+    .contact-button:focus-visible::before {
+      opacity: 0.62;
     }
 
     .contact-button:active {
